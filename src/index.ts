@@ -8,7 +8,7 @@ dotenv.config();
 
 const client = new Client({intents: [IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.GuildMessageReactions]})
 
-const TOKEN = process.env.DISCORD_BOT_TAKEN as string;
+const TOKEN = process.env.DISCORD_BOT_TOKEN as string;
 // Each of these prefixes supports the different
 // divisions of the formula series.
 const DEV_PREFIX = 'f1dev';
@@ -22,18 +22,22 @@ const devCommands = new Map<String, DevCommand>();
  * Searches the commands directory for all commands
  * that are implementing the command interface.
  */
-for (const file of fs.readdirSync(('./src/commands')).filter((file) => file.endsWith('.ts'))) {
-    const command = (await import(`./commands/${file}`)).default as Command;
-    publicCommands.set(command.name, command);
+async function loadPublicCommands() {
+    for (const file of fs.readdirSync(('./src/commands')).filter((file) => file.endsWith('.ts'))) {
+        const command = (await import(`./commands/${file}`)).default as Command;
+        publicCommands.set(command.name, command);
+    }
 }
 
 /**
  * Searches the dev commands directory for all commands
  * that are implementing the dev command interface.
  */
-for (const file of fs.readdirSync('./src/devcommands').filter((file) => file.endsWith('.ts'))) {
-    const devCommand = (await import(`./devcommands/${file}`)).default as DevCommand;
-    devCommands.set(devCommand.name, devCommand);
+async function loadDevCommands() {
+    for (const file of fs.readdirSync('./src/devcommands').filter((file) => file.endsWith('.ts'))) {
+        const devCommand = (await import(`./devcommands/${file}`)).default as DevCommand;
+        devCommands.set(devCommand.name, devCommand);
+    }
 }
 
 /**
@@ -93,6 +97,7 @@ client.login(TOKEN).then(() => {
         throw new Error('client#user is null');
     }
     console.log(`Logged in as ${client.user.tag}`);
+    loadPublicCommands().then(() => loadDevCommands());
 });
 
 /**
