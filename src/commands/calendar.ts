@@ -1,31 +1,56 @@
 import {Command} from "./impl/Command";
+import {EmbedBuilder} from "discord.js";
+import {Race} from "./impl/Race";
 import axios from "axios";
 
 const command: Command = {
     name: 'calendar',
     'description': 'Lists all the upcoming races for the current season',
     async execute(message, args) {
-        try {
-            const response = await axios.get('https://ergast.com/api/f1/current.json');
-            const races = response.data.MRData.RaceTable.Races;
+        const embed = new EmbedBuilder()
+            .setColor(5793266)
+            .setTitle('Current Race Data');
 
-            const currentDate = new Date();
-            const upcomingRaces = races.filter((race: any) => new Date(race.date) > currentDate);
+        const races = await getUpcomingRaces();
 
-            if (upcomingRaces.length === 0) {
-                await message.reply('There are no upcoming races this season');
-            } else {
-                const raceList = upcomingRaces.map((race: any, index: number) => {
-                    return `${index + 1}. ${race.raceName} - ${race.date}`;
-                });
+        for (let race of races) {
+            const hammerTime = getHammertimeUrl(race.date);
 
-                await message.reply(`Here are the upcoming races for the current F1 season:\n${raceList.join('\n')}`);
-            }
-        } catch (error) {
-            console.error(error);
-            await message.reply('There was an error fetching the calendar.');
+            embed.addFields(
+                {
+                    name: '🏎️',
+                    value: `📅 ${race.date} (${hammerTime})\n📍 ${race.circuit}, ${race.location}`
+                },
+            )
         }
+
+        message.channel.send({embeds: [embed]});
     }
+}
+
+async function getHammertimeUrl(date: string): Promise<string> {
+    const hammertimeBaseUrl = 'https://hammertime.cyou/api/v1/links';
+    const hammertimeUrl = new URL(hammertimeBaseUrl);
+    hammertimeUrl.searchParams.set('lang', 'en-GB');
+    hammertimeUrl.searchParams.set('datetime', date);
+
+    const response = await axios.get(hammertimeUrl.toString());
+    const data = response.data;
+
+    return data.link;
+}
+
+async function getUpcomingRaces(): Promise<Race[]> {
+    const currentYear = new Date().getFullYear();
+    const response = await axios.get(`https://ergast.com/api/f1/${currentYear}.json`);
+    const racesData = response.data.MRData.RaceTable.Races;
+
+    return racesData.map((racesData: any) => ({
+        raceName: racesData.raceName,
+        date: racesData.date,
+        circuit: racesData.circuit,
+        location: `${racesData.Circuit.Location.locality}, ${racesData.Circuit.Location.country}`
+    }));
 }
 
 export default command;

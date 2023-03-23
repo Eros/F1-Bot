@@ -1,9 +1,8 @@
 import {DevCommand} from "./impl/DevCommand";
-import {Command} from "../commands/impl/Command";
 
-const command: Command = {
-    name: 'ping',
-    description: 'pong',
+const command: DevCommand = {
+    name: 'test',
+    description: 'complete',
     async execute(message, arts) {
         await message.reply('pong');
     },
