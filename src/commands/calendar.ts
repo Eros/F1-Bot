@@ -1,11 +1,13 @@
-import {Command} from "./impl/Command";
+import {Command} from "./interface/Command";
 import {EmbedBuilder} from "discord.js";
-import {Race} from "./impl/Race";
+import {Race} from "./interface/Race";
 import axios from "axios";
+import {Format, MessageTimestamp} from "../classes/MessageTimestamp";
 
 const command: Command = {
     name: 'calendar',
-    'description': 'Lists all the upcoming races for the current season',
+    description: 'Lists all the upcoming races for the current season',
+    alias: ['cal', 'cl'],
     async execute(message, args) {
         const embed = new EmbedBuilder()
             .setColor(5793266)
@@ -14,30 +16,17 @@ const command: Command = {
         const races = await getUpcomingRaces();
 
         for (let race of races) {
-            const hammerTime = getHammertimeUrl(race.date);
-
             embed.addFields(
                 {
-                    name: '🏎️',
-                    value: `📅 ${race.date} (${hammerTime})\n📍 ${race.circuit}, ${race.location}`
+                    name: `🏎️ ${race.raceName}`,
+                    value: `📅 ${new MessageTimestamp(new Date(race.date)).toString(Format.SHORT_FULL)}\n📍 ${race.location}`,
+                    inline: true
                 },
             )
         }
 
         message.channel.send({embeds: [embed]});
     }
-}
-
-async function getHammertimeUrl(date: string): Promise<string> {
-    const hammertimeBaseUrl = 'https://hammertime.cyou/api/v1/links';
-    const hammertimeUrl = new URL(hammertimeBaseUrl);
-    hammertimeUrl.searchParams.set('lang', 'en-GB');
-    hammertimeUrl.searchParams.set('datetime', date);
-
-    const response = await axios.get(hammertimeUrl.toString());
-    const data = response.data;
-
-    return data.link;
 }
 
 async function getUpcomingRaces(): Promise<Race[]> {
@@ -48,7 +37,7 @@ async function getUpcomingRaces(): Promise<Race[]> {
     return racesData.map((racesData: any) => ({
         raceName: racesData.raceName,
         date: racesData.date,
-        circuit: racesData.circuit,
+        circuit: racesData.circuitId,
         location: `${racesData.Circuit.Location.locality}, ${racesData.Circuit.Location.country}`
     }));
 }

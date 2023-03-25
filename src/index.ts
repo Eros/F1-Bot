@@ -1,6 +1,6 @@
 import {Client, IntentsBitField, Message} from "discord.js";
 import * as fs from "fs";
-import {Command} from "./commands/impl/Command";
+import {Command} from "./commands/interface/Command";
 import {DevCommand} from "./devcommands/impl/DevCommand";
 import dotenv from 'dotenv';
 
@@ -32,6 +32,12 @@ async function loadPublicCommands() {
         const command = (await import(`./commands/${file}`)).default as Command;
         log(`Found public command with name ${command.name}`);
         publicCommands.set(command.name, command);
+
+        if (command.alias.length !== 0) {
+            for (let alias of command.alias) {
+                publicCommands.set(alias, command);
+            }
+        }
     }
 }
 
