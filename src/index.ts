@@ -125,15 +125,12 @@ client.login(TOKEN).then(() => {
  */
 function getPrefixFromMessageContent(message: Message): string | undefined {
     if (message == null || !message.content.trim()) {
-        log('Message is null or empty');
         return undefined;
     }
 
-    log(`Content = ${message.content}`);
-
-    const foundPrefix = ALLOWED_PREFIXES.find((prefix) => message.content.startsWith(prefix));
-    log(`Found prefix ${foundPrefix}`);
-
+    if (message.content.startsWith(DEV_PREFIX)) {
+        return DEV_PREFIX;
+    }
     return ALLOWED_PREFIXES.find((prefix) => message.content.startsWith(prefix));
 }
 
