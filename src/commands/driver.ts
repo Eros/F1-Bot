@@ -1,8 +1,8 @@
-import {Command} from "./interface/Command";
+import {Command} from "../interface/Command";
 import axios from "axios";
 import {Colors, EmbedBuilder} from "discord.js";
 
-
+// TODO - set to use cache
 export const command: Command = {
     name: 'driver',
     description: 'Provides life time information on specified driver',
@@ -61,30 +61,6 @@ export const command: Command = {
 
         message.channel.send({embeds: [embed]});
     }
-}
-
-export function getTotalPodiums(results: any[]): number {
-    let totalPodiums = 0;
-
-    for (let result of results) {
-        const pos = parseInt(result.Results[0].position);
-        if (pos >= 1 && pos <= 3) {
-            totalPodiums++;
-        }
-    }
-
-    return totalPodiums;
-}
-
-export function getTotalWins(results: any[]): number {
-    let totalWins = 0;
-    for (let result of results) {
-        if (result.Results[0].position === '1') {
-            totalWins++;
-        }
-    }
-
-    return totalWins;
 }
 
 export default command;

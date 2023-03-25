@@ -1,7 +1,7 @@
-import {Command} from "./interface/Command";
+import {Command} from "../interface/Command";
 import axios from "axios/index";
 import {EmbedBuilder} from "discord.js";
-import {Standings} from "./interface/Standings";
+import {Standings} from "../interface/Standings";
 
 const command: Command = {
     name: 'leaderboard',

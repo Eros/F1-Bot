@@ -1,6 +1,6 @@
 import {Client, IntentsBitField, Message} from "discord.js";
 import * as fs from "fs";
-import {Command} from "./commands/interface/Command";
+import {Command} from "./interface/Command";
 import {DevCommand} from "./devcommands/impl/DevCommand";
 import dotenv from 'dotenv';
 import './events';

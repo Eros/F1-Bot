@@ -1,6 +1,6 @@
-import {Command} from "./interface/Command";
+import {Command} from "../interface/Command";
 import {EmbedBuilder} from "discord.js";
-import {Race} from "./interface/Race";
+import {Race} from "../interface/Race";
 import axios from "axios";
 import {Format, MessageTimestamp} from "../classes/MessageTimestamp";
 
