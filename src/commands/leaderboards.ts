@@ -7,7 +7,7 @@ const command: Command = {
     name: 'leaderboard',
     description: 'Show the current leaderboard of points',
     alias: ['lb', 'lbs', 'standings', 'pos'],
-    async execute(message, arts) {
+    async execute(message, args) {
         const response = await axios.get('https://ergast.com/api/f1/current/driverStandings.json');
         const standingsData = response.data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
 
@@ -27,8 +27,7 @@ const command: Command = {
         standings.forEach((standing: Standings) => {
             embed.addFields({
                 name: `#${standing.position}`,
-                value: `${standing.name} 📊 Points: ${standing.points}`,
-                inline: true
+                value: `${standing.name} 📊 Points: ${standing.points}`
             });
         });
 
