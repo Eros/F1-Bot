@@ -3,6 +3,9 @@ import * as fs from "fs";
 import {Command} from "./commands/interface/Command";
 import {DevCommand} from "./devcommands/impl/DevCommand";
 import dotenv from 'dotenv';
+import './events';
+import {botEventEmitter} from "./events/BotEventEmitter";
+import {raceStartEventHandler} from "./events/raceStartEventHandler";
 
 dotenv.config();
 
@@ -116,6 +119,11 @@ client.login(TOKEN).then(() => {
     console.log(`Logged in as ${client.user.tag}`);
     loadPublicCommands().then(() => loadDevCommands());
 });
+
+/**
+ * Listen for any events being sent out.
+ */
+botEventEmitter.on('raceStart', raceStartEventHandler);
 
 /**
  * Checks the messages inputted to see if there was
