@@ -3,8 +3,6 @@ import * as fs from "fs";
 import {Command} from "./interface/Command";
 import {DevCommand} from "./devcommands/impl/DevCommand";
 import dotenv from 'dotenv';
-import {Database} from "./db/Database";
-import {ProcessListener} from "./listeners/ProcessListener";
 import {BotListener} from "./listeners/BotListener";
 
 dotenv.config();
@@ -27,8 +25,6 @@ const DEVELOPERS = ['226423378817449985' /*Rapid*/];
 
 const publicCommands = new Map<String, Command>();
 const devCommands = new Map<String, DevCommand>();
-
-const database: Database = new Database();
 
 /**
  * Searches the commands directory for all commands
@@ -68,8 +64,6 @@ client.login(TOKEN).then(() => {
     console.log(`Logged in as ${client.user.tag}`);
     loadPublicCommands()
         .then(() => loadDevCommands())
-        // .then(() => database.connect())
-        .then(() => new ProcessListener())
         .then(() => new BotListener(client));
 });
 
@@ -109,8 +103,4 @@ export function isDeveloper(user: User): boolean {
 
 export function isDeveloperPrefix(message: Message): boolean {
     return message.content.startsWith(DEV_PREFIX);
-}
-
-export function getDatabase(): Database {
-    return database;
 }
