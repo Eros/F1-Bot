@@ -13,11 +13,11 @@ export async function getLeaderboard(): Promise<Standings[]> {
     const response = await axios.get('https://ergast.com/api/f1/current/driverStandings.json');
     const standingsData = response.data.MRData.StandingsTable.StandingsLists[0].DriverStandings;
 
-    const standings: Standings[] = standingsData.map((standing: any, index: number) => {
-        name: `${standing.name}`;
-        points: standing.points;
-        position: index + 1;
-    });
+    const standings: Standings[] = standingsData.map((standing: any, index: number) => ({
+        name: `${standing.Driver.givenName} ${standing.Driver.familyName}`,
+        points: standing.points,
+        position: index + 1,
+    }));
 
     cache.set(cacheKey, standings);
 

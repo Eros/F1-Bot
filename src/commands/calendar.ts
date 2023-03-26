@@ -25,7 +25,7 @@ const command: Command = {
             embed.addFields(
                 {
                     name: `🏎️ ${race.raceName}`,
-                    value: `📅 ${new MessageTimestamp(new Date(race.date)).toString(Format.SHORT_FULL)}\n📍 ${race.location}`,
+                    value: `📅 ${new MessageTimestamp(new Date(race.date)).toString(Format.SHORT_FULL)} ${new MessageTimestamp(new Date(race.date)).toString(Format.RELATIVE)}\n📍 ${race.location}`,
                     inline: true
                 },
             )

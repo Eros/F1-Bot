@@ -26,7 +26,7 @@ export async function getDriverData(input: string | number): Promise<Driver> {
 
     const driverData: Driver = {
         name: `${driver.givenName} ${driver.familyName}`,
-        permNumber: driver.permenantNumber,
+        permNumber: driver.permanentNumber,
         totalRaces: totalRaces,
         totalPodiums: totalPodiums,
         totalWins: totalWins,

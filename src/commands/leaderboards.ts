@@ -16,12 +16,12 @@ const command: Command = {
             .setColor('#0099ff')
             .setTitle('🏆 Formula 1 Leaderboard 🏆');
 
-        standings.forEach((standing: Standings) => {
+        for (let standing of standings) {
             embed.addFields({
                 name: `#${standing.position}`,
                 value: `${standing.name} 📊 Points: ${standing.points}`
             });
-        });
+        }
 
         message.channel.send({ embeds: [embed] });
     }
