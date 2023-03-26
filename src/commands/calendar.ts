@@ -12,7 +12,7 @@ const command: Command = {
     async execute(message, args) {
         const embed = new EmbedBuilder()
             .setColor(5793266)
-            .setTitle('Current Race Data');
+            .setTitle(`${new Date().getFullYear()} Season Calendar`);
 
         const races = await getCurrentSeason();
 
