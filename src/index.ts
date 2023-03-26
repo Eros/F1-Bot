@@ -1,4 +1,4 @@
-import {Client, IntentsBitField, Message, User} from "discord.js";
+import {Client, Colors, EmbedBuilder, IntentsBitField, Message, User} from "discord.js";
 import * as fs from "fs";
 import {Command} from "./interface/Command";
 import {DevCommand} from "./devcommands/impl/DevCommand";
@@ -83,6 +83,26 @@ export function getPrefixFromMessageContent(message: Message): string | undefine
         return DEV_PREFIX;
     }
     return ALLOWED_PREFIXES.find((prefix) => message.content.startsWith(prefix));
+}
+
+/**
+ * Generates the help command based off the
+ * content that is in the public commands map.
+ * @param message that the user sent.
+ */
+export function generateHelpCommand(message: Message) {
+    const embed = new EmbedBuilder()
+        .setColor(Colors.DarkVividPink)
+        .setTitle(':wrench: Available Commands');
+
+    publicCommands.forEach((cmd, name) => {
+       embed.addFields({
+           name: `${name}`,
+           value: `${cmd.description}`
+       });
+    });
+
+    message.reply({embeds: [embed]});
 }
 
 export function log(message: String) {
