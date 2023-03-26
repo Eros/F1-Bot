@@ -5,7 +5,7 @@ import axios from "axios";
 export async function getDriverData(input: string | number): Promise<Driver> {
     const cacheKey = "driver" + input;
 
-    const data = cache.get<Promise<Driver>>(cacheKey)
+    const data = cache.get<Promise<Driver>>(cacheKey);
 
     if (data) {
         return data;
@@ -24,16 +24,16 @@ export async function getDriverData(input: string | number): Promise<Driver> {
     const totalWins = getTotalWins(results);
     const totalPodiums = getTotalPodiums(results);
 
-    const driverData = driverStatsData.map((dd: any) => {
-        name: `${dd.givenName} ${dd.familyName}`
-        permNumber: `${dd.permanentNumber}`
-        totalRaces: totalRaces
-        totalPodiums: totalPodiums
-        totalWins: totalWins
-        nationality: `${dd.nationality}`
-        wikiLink: `${dd.url}`
-        dateOfBirth: `${dd.dateOfBirth}`
-    });
+    const driverData: Driver = {
+        name: `${driver.givenName} ${driver.familyName}`,
+        permNumber: driver.permenantNumber,
+        totalRaces: totalRaces,
+        totalPodiums: totalPodiums,
+        totalWins: totalWins,
+        nationality: `${driver.nationality}`,
+        wikiLink: `${driver.url}`,
+        dateOfBirth: `${driver.dateOfBirth}`,
+    };
 
     cache.set(cacheKey, driverData);
 

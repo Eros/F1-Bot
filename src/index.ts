@@ -1,20 +1,22 @@
-import {Client, IntentsBitField, Message} from "discord.js";
+import {Client, IntentsBitField, Message, User} from "discord.js";
 import * as fs from "fs";
 import {Command} from "./interface/Command";
 import {DevCommand} from "./devcommands/impl/DevCommand";
 import dotenv from 'dotenv';
-import './events';
-import {botEventEmitter} from "./events/BotEventEmitter";
-import {raceStartEventHandler} from "./events/raceStartEventHandler";
+import {Database} from "./db/Database";
+import {ProcessListener} from "./listeners/ProcessListener";
+import {BotListener} from "./listeners/BotListener";
 
 dotenv.config();
 
-const client = new Client({intents: [
+const client = new Client({
+    intents: [
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.GuildMessageReactions,
         IntentsBitField.Flags.MessageContent
-    ]});
+    ]
+});
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN as string;
 // Each of these prefixes supports the different
@@ -25,6 +27,8 @@ const DEVELOPERS = ['226423378817449985' /*Rapid*/];
 
 const publicCommands = new Map<String, Command>();
 const devCommands = new Map<String, DevCommand>();
+
+const database: Database = new Database();
 
 /**
  * Searches the commands directory for all commands
@@ -57,73 +61,18 @@ async function loadDevCommands() {
     }
 }
 
-/**
- * Handles all the commands based of the users
- * messages being sent.
- */
-client.on('messageCreate', async (message) => {
-    let usedPrefix = getPrefixFromMessageContent(message);
-
-    if (usedPrefix == null) return;
-
-    const args = message.content.slice(usedPrefix.length).trim().split(/ +/);
-    const commandName = args.shift()?.toLowerCase();
-
-    log(`Command name = ${commandName}`)
-
-    if (!commandName) return;
-
-    const command = publicCommands?.get(commandName);
-    if (!command) return;
-
-    try {
-        command.execute(message, args);
-    } catch (error) {
-        console.error(error);
-        message.reply('Sorry, there was an error with this command!');
-    }
-});
-
-/**
- * Handles all the dev commands based of
- * the users messages being sent. Checks the
- * users identifier to see if they're allowed to
- * run the command.
- */
-client.on('messageCreate', async (message) => {
-    let usedPrefix = getPrefixFromMessageContent(message);
-    if (usedPrefix != DEV_PREFIX) return;
-
-    if (!DEVELOPERS.includes(message.author.id)) return;
-
-    const args = message.content.slice(usedPrefix.length).trim().split(/ +/);
-    const commandName = args.shift()?.toLowerCase();
-
-    if (!commandName) return;
-
-    const command = devCommands?.get(commandName);
-    if (!command) return;
-
-    try {
-        command.execute(message, args);
-    } catch (error) {
-        console.error(error);
-        message.reply('Something went wrong with this command, check the error logs!');
-    }
-});
-
 client.login(TOKEN).then(() => {
     if (client.user == null) {
         throw new Error('client#user is null');
     }
     console.log(`Logged in as ${client.user.tag}`);
-    loadPublicCommands().then(() => loadDevCommands());
+    loadPublicCommands()
+        .then(() => loadDevCommands())
+        // .then(() => database.connect())
+        .then(() => new ProcessListener())
+        .then(() => new BotListener(client));
 });
 
-/**
- * Listen for any events being sent out.
- */
-botEventEmitter.on('raceStart', raceStartEventHandler);
 
 /**
  * Checks the messages inputted to see if there was
@@ -131,7 +80,7 @@ botEventEmitter.on('raceStart', raceStartEventHandler);
  * @param message that the user sent.
  * @return the prefix found or null if one was not found.
  */
-function getPrefixFromMessageContent(message: Message): string | undefined {
+export function getPrefixFromMessageContent(message: Message): string | undefined {
     if (message == null || !message.content.trim()) {
         return undefined;
     }
@@ -142,6 +91,26 @@ function getPrefixFromMessageContent(message: Message): string | undefined {
     return ALLOWED_PREFIXES.find((prefix) => message.content.startsWith(prefix));
 }
 
-function log(message: String) {
+export function log(message: String) {
     console.log(`[F1-Bot] ${message}`);
+}
+
+export function getPublicCommands(): Map<String, Command> {
+    return publicCommands;
+}
+
+export function getDevCommands(): Map<String, DevCommand> {
+    return devCommands;
+}
+
+export function isDeveloper(user: User): boolean {
+    return DEVELOPERS.includes(user.id);
+}
+
+export function isDeveloperPrefix(message: Message): boolean {
+    return message.content.startsWith(DEV_PREFIX);
+}
+
+export function getDatabase(): Database {
+    return database;
 }

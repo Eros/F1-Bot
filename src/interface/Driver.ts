@@ -3,7 +3,7 @@ export interface Driver {
     totalRaces: number,
     totalWins: number,
     totalPodiums: number,
-    nationality: number,
+    nationality: string,
     dateOfBirth: string,
     wikiLink: string,
     name: string

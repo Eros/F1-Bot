@@ -3,7 +3,6 @@ import axios from "axios";
 import {Colors, EmbedBuilder} from "discord.js";
 import {getDriverData} from "../cache/driverCache";
 
-// TODO - set to use cache
 export const command: Command = {
     name: 'driver',
     description: 'Provides life time information on specified driver',
@@ -22,7 +21,7 @@ export const command: Command = {
         }
 
         const embed = new EmbedBuilder()
-            .setTitle(`🏎️ ${driverFromCache} ${driverFromCache.name}`)
+            .setTitle(`🏎️ ${driverFromCache.name}`)
             .setColor(Colors.DarkGold)
             .addFields({
                     name: 'Driver Number: ',
