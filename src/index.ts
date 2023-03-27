@@ -20,7 +20,7 @@ const TOKEN = process.env.DISCORD_BOT_TOKEN as string;
 // Each of these prefixes supports the different
 // divisions of the formula series.
 const DEV_PREFIX = 'dv';
-const ALLOWED_PREFIXES = ['f1', 'f2', 'f3'];
+const PREFIX = 'f1';
 const DEVELOPERS = ['226423378817449985' /*Rapid*/];
 
 const publicCommands = new Map<String, Command>();
@@ -82,27 +82,10 @@ export function getPrefixFromMessageContent(message: Message): string | undefine
     if (message.content.startsWith(DEV_PREFIX)) {
         return DEV_PREFIX;
     }
-    return ALLOWED_PREFIXES.find((prefix) => message.content.startsWith(prefix));
-}
-
-/**
- * Generates the help command based off the
- * content that is in the public commands map.
- * @param message that the user sent.
- */
-export function generateHelpCommand(message: Message) {
-    const embed = new EmbedBuilder()
-        .setColor(Colors.DarkVividPink)
-        .setTitle(':wrench: Available Commands');
-
-    publicCommands.forEach((cmd, name) => {
-       embed.addFields({
-           name: `${name}`,
-           value: `${cmd.description}`
-       });
-    });
-
-    message.reply({embeds: [embed]});
+    if (message.content.startsWith(PREFIX)) {
+        return PREFIX;
+    }
+    return undefined;
 }
 
 export function log(message: String) {

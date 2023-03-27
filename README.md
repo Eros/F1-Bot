@@ -1,5 +1,5 @@
 # F1-Bot
-An (in-progess) bot for gathering F1 Data and later on F2-4 & FE.
+A discord bot for gathering information on the current F1 season and drivers.
 
 # Setup
 

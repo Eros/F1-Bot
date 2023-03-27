@@ -1,6 +1,5 @@
 import {Client, Events} from "discord.js";
 import {
-    generateHelpCommand,
     getDevCommands,
     getPrefixFromMessageContent,
     getPublicCommands,
@@ -31,11 +30,6 @@ export class BotListener {
             log(`Command name = ${commandName}`)
 
             if (!commandName) return;
-
-            if (commandName.toLowerCase() === 'help') {
-                generateHelpCommand(message);
-                return;
-            }
 
             const command = getPublicCommands()?.get(commandName);
             if (!command) return;
