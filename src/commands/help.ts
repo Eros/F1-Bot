@@ -35,5 +35,9 @@ const command: Command = {
                     inline: true
                 }
             );
+
+        message.channel.send({embeds: [embed]});
     }
 }
+
+export default command;
