@@ -5,7 +5,7 @@
     "axios": "^0.21.4",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.3",
-    "mongodb": "^5.1.0",
+    "mongodb": "^5.8.0",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "ts-node": "^10.9.1",
